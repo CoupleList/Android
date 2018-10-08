@@ -9,11 +9,27 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private val usernameListener = object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            if (dataSnapshot.exists()) {
+                nav_view.getHeaderView(0).username_textView.text = dataSnapshot.value.toString()
+            }
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +49,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         nav_view.getHeaderView(0).email_textView.text = FirebaseAuth.getInstance().currentUser!!.email
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+
+        FirebaseDatabase
+                .getInstance()
+                .reference
+                .child("users")
+                .child(user.uid)
+                .child("username")
+                .addValueEventListener(usernameListener)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        val user = FirebaseAuth.getInstance().currentUser!!
+
+        FirebaseDatabase
+                .getInstance()
+                .reference
+                .child("users")
+                .child(user.uid)
+                .child("username")
+                .removeEventListener(usernameListener)
     }
 
     override fun onBackPressed() {

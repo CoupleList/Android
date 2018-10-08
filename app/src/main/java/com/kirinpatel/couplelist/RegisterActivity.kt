@@ -18,6 +18,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.ArrayAdapter
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 import java.util.ArrayList
 
@@ -105,7 +106,7 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true)
-            mAuthTask = UserRegisterTask(emailStr, passwordStr)
+            mAuthTask = UserRegisterTask(usernameStr, emailStr, passwordStr)
             mAuthTask!!.execute(null as Void?)
         }
     }
@@ -203,7 +204,7 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    inner class UserRegisterTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Void>() {
+    inner class UserRegisterTask internal constructor(private val mUsername: String, private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Void>() {
 
         override fun doInBackground(vararg params: Void): Void? {
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(mEmail, mPassword)
@@ -213,7 +214,15 @@ class RegisterActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
 
                         when {
                             task.isSuccessful -> {
-                                finish()
+                                val user = FirebaseAuth.getInstance().currentUser!!
+                                FirebaseDatabase
+                                        .getInstance()
+                                        .reference
+                                        .child("users")
+                                        .child(user.uid)
+                                        .child("username")
+                                        .setValue(mUsername)
+                                        .addOnCompleteListener { finish() }
                             }
                             task.isComplete -> {
                                 Snackbar.make(
