@@ -20,13 +20,21 @@ class LoadingActivity : AppCompatActivity() {
                     startMainActivity()
                 } else {
                     // Check if user has version 1 of list node in user node
+                    var hasList = false
+
                     dataSnapshot.children.forEach { child ->
                         if (child.hasChild("code") && !child.hasChild("key")) {
                             // Version 1 of list node is in user node
+                            hasList = true
+
                             upgradeListVersion(
                                     child.child("key").value.toString(),
                                     child.child("code").value.toString())
                         }
+                    }
+
+                    if (!hasList) {
+                        startGenerateListActivity()
                     }
                 }
             } else {
