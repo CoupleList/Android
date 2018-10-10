@@ -54,29 +54,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
 
-        val user = FirebaseAuth.getInstance().currentUser!!
+        val user = FirebaseAuth.getInstance().currentUser
 
-        FirebaseDatabase
-                .getInstance()
-                .reference
-                .child("users")
-                .child(user.uid)
-                .child("username")
-                .addValueEventListener(usernameListener)
+        if (user != null) {
+            FirebaseDatabase
+                    .getInstance()
+                    .reference
+                    .child("users")
+                    .child(user.uid)
+                    .child("username")
+                    .removeEventListener(usernameListener)
+        }
     }
 
     override fun onPause() {
         super.onPause()
 
-        val user = FirebaseAuth.getInstance().currentUser!!
+        val user = FirebaseAuth.getInstance().currentUser
 
-        FirebaseDatabase
-                .getInstance()
-                .reference
-                .child("users")
-                .child(user.uid)
-                .child("username")
-                .removeEventListener(usernameListener)
+        if (user != null) {
+            FirebaseDatabase
+                    .getInstance()
+                    .reference
+                    .child("users")
+                    .child(user.uid)
+                    .child("username")
+                    .removeEventListener(usernameListener)
+        }
     }
 
     override fun onBackPressed() {
