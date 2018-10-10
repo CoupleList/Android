@@ -11,8 +11,6 @@ import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_generate_list.*
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 
-
-
 class GenerateListActivity : AppCompatActivity() {
 
     private lateinit var mDatabase: DatabaseReference
