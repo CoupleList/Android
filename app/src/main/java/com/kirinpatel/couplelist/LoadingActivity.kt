@@ -9,7 +9,7 @@ import com.google.firebase.database.*
 class LoadingActivity : AppCompatActivity() {
 
     private lateinit var mDatabase: DatabaseReference
-    private lateinit var uid: String
+    private var uid: String = ""
 
     private val userListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
