@@ -1,6 +1,7 @@
 package com.kirinpatel.couplelist
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -17,6 +18,10 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import kotlinx.android.synthetic.main.activity_register.*
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -120,27 +125,79 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
+            R.id.nav_list -> {
                 // Handle the camera action
             }
-            R.id.nav_gallery -> {
+            R.id.nav_profile -> {
 
             }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
-
-            }
+            R.id.nav_share -> shareList()
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun shareList() {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null) {
+            FirebaseDatabase.getInstance().reference
+                    .child("users")
+                    .child(user.uid)
+                    .child("list")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                generateShareableLink(
+                                        dataSnapshot.child("key").value.toString(),
+                                        dataSnapshot.child("code").value.toString())
+                            } else {
+                                Snackbar.make(root_layout,
+                                        "Unable to create sharable link.",
+                                        Snackbar.LENGTH_LONG)
+                                        .show()
+                            }
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+
+                        }
+                    })
+        } else {
+            Snackbar.make(root_layout,
+                    "Unable to create sharable link.",
+                    Snackbar.LENGTH_LONG)
+                    .show()
+        }
+    }
+
+    private fun generateShareableLink(key: String, code: String) {
+        FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://couplelist.app/?link=$key"))
+                .setDynamicLinkDomain("sa6cz.app.goo.gl")
+                .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
+                .setIosParameters(
+                        DynamicLink.IosParameters.Builder("com.kirinpatel.couplelist")
+                                .setAppStoreId("123456789")
+                                .setMinimumVersion("1.0.1")
+                                .build())
+                .buildShortDynamicLink()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val extraText = "Hey, help me make our Couple List! Click this link below then use the password \"$code.\" " + task.result!!.shortLink
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, extraText)
+                            type = "text/plain"
+                        }
+                        startActivity(sendIntent)
+                    } else {
+                        Snackbar.make(root_layout,
+                                "Unable to create sharable link.",
+                                Snackbar.LENGTH_LONG)
+                                .show()
+                    }
+                }
     }
 }
