@@ -134,6 +134,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_share -> shareList()
+            R.id.nav_feedback -> {
+                val intent = Intent(this, FeedbackActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
