@@ -1,4 +1,4 @@
-package com.kirinpatel.couplelist
+package com.kirinpatel.couplelist.activities
 
 import android.annotation.TargetApi
 import android.content.Context
@@ -16,6 +16,7 @@ import android.preference.PreferenceManager
 import android.preference.RingtonePreference
 import android.text.TextUtils
 import android.view.MenuItem
+import com.kirinpatel.couplelist.R
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On

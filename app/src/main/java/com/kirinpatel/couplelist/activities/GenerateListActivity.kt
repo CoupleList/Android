@@ -1,4 +1,4 @@
-package com.kirinpatel.couplelist
+package com.kirinpatel.couplelist.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_generate_list.*
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.kirinpatel.couplelist.R
 
 class GenerateListActivity : AppCompatActivity() {
 

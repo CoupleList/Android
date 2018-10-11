@@ -1,10 +1,11 @@
-package com.kirinpatel.couplelist
+package com.kirinpatel.couplelist.activities
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.kirinpatel.couplelist.R
 
 class LoadingActivity : AppCompatActivity() {
 

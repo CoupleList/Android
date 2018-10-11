@@ -1,4 +1,4 @@
-package com.kirinpatel.couplelist
+package com.kirinpatel.couplelist.activities
 
 import android.content.res.Configuration
 import android.os.Bundle

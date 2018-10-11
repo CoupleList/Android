@@ -1,4 +1,4 @@
-package com.kirinpatel.couplelist
+package com.kirinpatel.couplelist.activities
 
 import android.content.Intent
 import android.net.Uri
@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.kirinpatel.couplelist.R
 import kotlinx.android.synthetic.main.activity_register.*
 
 
