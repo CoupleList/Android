@@ -1,11 +1,13 @@
 package com.kirinpatel.couplelist.activities
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.kirinpatel.couplelist.R
+import com.kirinpatel.couplelist.utils.CoupleList
 
 class LoadingActivity : AppCompatActivity() {
 
@@ -18,6 +20,9 @@ class LoadingActivity : AppCompatActivity() {
                 // User node exists in Firebase
                 if (dataSnapshot.hasChild("list")) {
                     // Version 2 of list node exists in user node
+                    saveListToDevice(
+                            dataSnapshot.child("list").child("key").value.toString(),
+                            dataSnapshot.child("list").child("code").value.toString())
                     startMainActivity()
                 } else {
                     // Check if user has version 1 of list node in user node
@@ -117,6 +122,17 @@ class LoadingActivity : AppCompatActivity() {
                         // Remove old list information
                         mDatabase.child("user").child(user.uid).child(key).removeValue()
                     }
+            saveListToDevice(key, code)
         }
+    }
+
+    private fun saveListToDevice(key: String, code: String) {
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        with (sharedPref.edit()) {
+            putString(getString(R.string.saved_list_key), key)
+            putString(getString(R.string.saved_list_code), code)
+            commit()
+        }
+        CoupleList.getInstance(this)
     }
 }
